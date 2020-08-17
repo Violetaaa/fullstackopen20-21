@@ -50,6 +50,7 @@ const App = () => {
 
   return (
     <div>
+      <h1>Web development curriculum</h1>
       {courses.map(course => (<Course kery={course.id} course={course} />))}
     </div>
   )
@@ -69,7 +70,7 @@ const Course = ({ course }) => {
 const Header = (props) => {
   return (
     <div>
-      <h1>{props.name}</h1>
+      <h2>{props.name}</h2>
     </div>
   )
 }
@@ -97,7 +98,7 @@ const Part = (props) => {
 const Total = (props) => {
   return (
     <div>
-      <p>Number of exercises {props.parts.reduce((total, part) => total + part.exercises, 0)}</p>
+      <p><strong>Total of {props.parts.reduce((total, part) => total + part.exercises, 0)} exercises</strong></p>
     </div>
   )
 }
