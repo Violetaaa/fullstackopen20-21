@@ -20,8 +20,8 @@ const App = (props) => {
     setVote(copy)
   }
 
-  const maxVotesItem = Math.max(...vote) //
-  const mostVotedAnecdote = anecdotes[vote.indexOf(maxVotesItem)]; //
+  const maxVotesItem = Math.max(...vote) 
+  const mostVotedAnecdote = anecdotes[vote.indexOf(maxVotesItem)]; 
 
   return (
     <div>
