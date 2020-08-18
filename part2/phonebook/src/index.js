@@ -3,20 +3,23 @@ import ReactDOM from 'react-dom'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    {
-      name: 'Arto Hellas',
-      phone: 123
-    }
+    { name: 'Arto Hellas', number: '040-123456' },
+    { name: 'Ada Lovelace', number: '39-44-5323523' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
   ])
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
+  const [newSearch, setNewSearch] = useState('')
 
+  const handleSearchChange = (event) => { 
+    setNewSearch(event.target.value)
+  }
   const handleNameChange = (event) => {
-    // console.log(event.target.value)    
     setNewName(event.target.value)
   }
 
-  const handlePhoneChange = (event) => {    
+  const handlePhoneChange = (event) => {
     setNewPhone(event.target.value)
   }
 
@@ -30,16 +33,23 @@ const App = () => {
         name: newName,
         phone: newPhone
       }
-      setPersons(persons.concat(noteObject)) //añade nuevo contacto a la lista
-      setNewName('') //resetea el valor del input
+      setPersons(persons.concat(noteObject)) 
+      setNewName('')
       setNewPhone('')
     }
   }
 
+  const filteredPersons = newSearch ? persons.filter(person => (person.name.toLowerCase()).includes(newSearch.toLowerCase())) : persons
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <div>
+        filter shown with <input
+          value={newSearch}
+          onChange={handleSearchChange} />
+      </div>
+      <h2>Add a new</h2>
       <form onSubmit={addName}>
         <div>
           name: <input
@@ -57,7 +67,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <ul>
-        {persons.map(person =>
+        {filteredPersons.map(person =>
           <li key={person.name}>{person.name} {person.phone} </li>)}
       </ul>
     </div>
