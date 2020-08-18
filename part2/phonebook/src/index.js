@@ -1,6 +1,48 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
+
+const PersonForm = ({ addName, newName, handleNameChange, newPhone, handlePhoneChange }) => {
+  return (
+    <form onSubmit={addName}>
+      <div>
+        name: <input
+          value={newName}
+          onChange={handleNameChange} />
+      </div>
+      <div>
+        phone: <input
+          value={newPhone}
+          onChange={handlePhoneChange} />
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+
+  )
+}
+const Filter = ({ newSearch, handleSearchChange }) => {
+
+  return (
+    <div>
+      filter shown with <input
+        value={newSearch}
+        onChange={handleSearchChange} />
+    </div>
+  )
+}
+
+const Persons = ({ persons, newSearch }) => {
+  const filteredPersons = newSearch ? persons.filter(person => (person.name.toLowerCase()).includes(newSearch.toLowerCase())) : persons
+  return (
+    <ul>
+      {filteredPersons.map(person =>
+        <li key={person.name}>{person.name} {person.phone} </li>)}
+    </ul>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456' },
@@ -12,20 +54,17 @@ const App = () => {
   const [newPhone, setNewPhone] = useState('')
   const [newSearch, setNewSearch] = useState('')
 
-  const handleSearchChange = (event) => { 
+  const handleSearchChange = (event) => {
     setNewSearch(event.target.value)
   }
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
-
   const handlePhoneChange = (event) => {
     setNewPhone(event.target.value)
   }
-
   const addName = (event) => {
     event.preventDefault()
-
     if (persons.find(person => person.name === newName)) {
       window.alert(`${newName} is already added to phonebook`)
     } else {
@@ -33,43 +72,24 @@ const App = () => {
         name: newName,
         phone: newPhone
       }
-      setPersons(persons.concat(noteObject)) 
+      setPersons(persons.concat(noteObject))
       setNewName('')
       setNewPhone('')
     }
   }
 
-  const filteredPersons = newSearch ? persons.filter(person => (person.name.toLowerCase()).includes(newSearch.toLowerCase())) : persons
-
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with <input
-          value={newSearch}
-          onChange={handleSearchChange} />
-      </div>
+      <Filter newSearch={newSearch} handleSearchChange={handleSearchChange} />
+
       <h2>Add a new</h2>
-      <form onSubmit={addName}>
-        <div>
-          name: <input
-            value={newName}
-            onChange={handleNameChange} />
-        </div>
-        <div>
-          phone: <input
-            value={newPhone}
-            onChange={handlePhoneChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm
+        addName={addName} newName={newName} handleNameChange={handleNameChange} newPhone={newPhone} handlePhoneChange={handlePhoneChange}
+      />
       <h2>Numbers</h2>
-      <ul>
-        {filteredPersons.map(person =>
-          <li key={person.name}>{person.name} {person.phone} </li>)}
-      </ul>
+      <Persons persons={persons} newSearch={newSearch} />
+
     </div>
   )
 }
