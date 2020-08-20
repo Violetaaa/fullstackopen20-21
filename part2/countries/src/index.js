@@ -6,7 +6,7 @@ const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>{text}</button>
 )
 
-const Countries = ({ countries, newSearch, setNewSearch }) => {
+const Countries = ({ countries, newSearch, setNewSearch, weather, setWeather }) => {
   // console.log(countries)
   const filteredCountries = countries.filter(countrie => (countrie.name.toLowerCase()).includes(newSearch.toLowerCase()))
   // console.log(filteredCountries[0])
@@ -31,7 +31,7 @@ const Countries = ({ countries, newSearch, setNewSearch }) => {
     )
   } else if (filteredCountries.length === 1) {
     return (
-      <Country country={filteredCountries[0]} />
+      <Country country={filteredCountries[0]} weather={weather} setWeather={setWeather} />
     )
   } else {
     return (
@@ -50,7 +50,21 @@ const Filter = ({ newSearch, handleSearchChange }) => {
   )
 }
 
-const Country = ({ country }) => {
+const Country = ({ country, weather, setWeather }) => {
+  
+  useEffect(() => {
+    const params = {
+      access_key: process.env.REACT_APP_API_KEY,
+      query: country.capital
+  }
+
+  axios
+      .get('http://api.weatherstack.com/current', {params})
+      .then(response => {
+        setWeather(response.data.current)
+      })
+  }, [country.capital, setWeather])
+  
   return (
     <div>
       <h1>{country.name}</h1>
@@ -63,6 +77,10 @@ const Country = ({ country }) => {
         ))}
       </ul>
       <img src={country.flag} alt={country.name}></img>
+      <h2>Weather in {country.capital}</h2>
+      <p>temperature {weather.temperature}</p>
+      <img src={weather.weather_icons} alt={country.name}></img>
+      <p>wind {weather.wind_speed} mph directions {weather.wind_dir}</p>
     </div>
 
   )
@@ -72,17 +90,16 @@ const App = () => {
 
   const [countries, setCountries] = useState([])
   const [newSearch, setNewSearch] = useState('')
+  const [weather, setWeather] = useState('');
 
   const handleSearchChange = (event) => {
     setNewSearch(event.target.value)
   }
 
   useEffect(() => {
-    console.log('effect')
     axios
       .get('https://restcountries.eu/rest/v2/all')
       .then(response => {
-        console.log('promise fulfilled')
         setCountries(response.data)
       })
   }, [])
@@ -92,7 +109,7 @@ const App = () => {
       <h2>Filter</h2>
       <Filter newSearch={newSearch} handleSearchChange={handleSearchChange} />
       <h2>Countries</h2>
-      <Countries countries={countries} newSearch={newSearch} setNewSearch={setNewSearch} />
+      <Countries countries={countries} newSearch={newSearch} setNewSearch={setNewSearch} weather={weather} setWeather={setWeather}/>
     </div>
   )
 }
