@@ -2,11 +2,18 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import ReactDOM from 'react-dom'
 
-const Countries = ({ countries, newSearch }) => {
+const Button = ({ handleClick, text }) => (
+  <button onClick={handleClick}>{text}</button>
+)
+
+const Countries = ({ countries, newSearch, setNewSearch }) => {
   // console.log(countries)
   const filteredCountries = countries.filter(countrie => (countrie.name.toLowerCase()).includes(newSearch.toLowerCase()))
   // console.log(filteredCountries[0])
-
+  const handleButton = (event) => {
+    // console.log(event.target.parentNode.getAttribute("value"))
+    setNewSearch(event.target.parentNode.getAttribute("value"))
+  }
   if (filteredCountries.length > 10) {
     return (
       <div>
@@ -18,7 +25,7 @@ const Countries = ({ countries, newSearch }) => {
       <div>
         <ul>
           {filteredCountries.map(countrie =>
-            <li key={countrie.name}>{countrie.name}</li>)}
+            <li value={countrie.name} key={countrie.name}>{countrie.name} <Button handleClick={handleButton} text='show' /></li>)}
         </ul>
       </div>
     )
@@ -69,6 +76,7 @@ const App = () => {
   const handleSearchChange = (event) => {
     setNewSearch(event.target.value)
   }
+
   useEffect(() => {
     console.log('effect')
     axios
@@ -84,7 +92,7 @@ const App = () => {
       <h2>Filter</h2>
       <Filter newSearch={newSearch} handleSearchChange={handleSearchChange} />
       <h2>Countries</h2>
-      <Countries countries={countries} newSearch={newSearch} />
+      <Countries countries={countries} newSearch={newSearch} setNewSearch={setNewSearch} />
     </div>
   )
 }
