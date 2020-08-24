@@ -1,6 +1,8 @@
 import React, { useState, useEffect  } from 'react'
 import ReactDOM from 'react-dom'
-import axios from 'axios'
+// import axios from 'axios'
+import personService from './services/persons'
+
 
 const PersonForm = ({ addName, newName, handleNameChange, newPhone, handlePhoneChange }) => {
   return (
@@ -56,11 +58,9 @@ const App = () => {
   const [newSearch, setNewSearch] = useState('')
 
   useEffect(() => {
-    // console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => {
-        // console.log('promise fulfilled')
         setPersons(response.data)
       })
   }, [])
@@ -68,12 +68,15 @@ const App = () => {
   const handleSearchChange = (event) => {
     setNewSearch(event.target.value)
   }
+
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
+
   const handlePhoneChange = (event) => {
     setNewPhone(event.target.value)
   }
+
   const addName = (event) => {
     event.preventDefault()
     if (persons.find(person => person.name === newName)) {
@@ -83,8 +86,8 @@ const App = () => {
         name: newName,
         phone: newPhone
       }
-      axios
-        .post('http://localhost:3001/persons', noteObject)
+      personService
+        .create(noteObject)
         .then(response => {
           setPersons(persons.concat(response.data))      
           setNewName('')
