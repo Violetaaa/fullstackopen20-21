@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
-// import axios from 'axios'
 import personService from './services/persons'
 
 
@@ -78,8 +77,19 @@ const App = () => {
 
   const addName = (event) => {
     event.preventDefault()
-    if (persons.find(person => person.name === newName)) {
-      window.alert(`${newName} is already added to phonebook`)
+
+    const duplicatedPerson = persons.find(p => p.name === newName)
+
+    if (duplicatedPerson) {
+      window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
+      const updatedPerson = { ...duplicatedPerson, phone: newPhone }
+
+      personService
+        .update(updatedPerson)
+        .then(response => {
+          setPersons(persons.map(p => p.id !== updatedPerson.id ? p : response.data))
+        })
+
     } else {
       const noteObject = {
         name: newName,
@@ -96,7 +106,6 @@ const App = () => {
   }
 
   const deletePerson = (person) => {
-    console.log(person.id)
     if (window.confirm(`Delete ${person.name}?`)) {
       personService
         .remove(person.id)
