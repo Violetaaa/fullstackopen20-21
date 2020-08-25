@@ -1,4 +1,4 @@
-import React, { useState, useEffect  } from 'react'
+import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 // import axios from 'axios'
 import personService from './services/persons'
@@ -34,12 +34,17 @@ const Filter = ({ newSearch, handleSearchChange }) => {
   )
 }
 
-const Persons = ({ persons, newSearch }) => {
+const Persons = ({ persons, newSearch, deletePerson }) => {
   const filteredPersons = newSearch ? persons.filter(person => (person.name.toLowerCase()).includes(newSearch.toLowerCase())) : persons
+
+
   return (
     <ul>
       {filteredPersons.map(person =>
-        <li key={person.name}>{person.name} {person.phone} </li>)}
+        <li key={person.name}>
+          {person.name} {person.phone}
+          <button onClick={() => deletePerson(person)}>delete</button>
+        </li>)}
     </ul>
   )
 }
@@ -47,12 +52,6 @@ const Persons = ({ persons, newSearch }) => {
 const App = () => {
 
   const [persons, setPersons] = useState([])
-  // const [persons, setPersons] = useState([
-  //   { name: 'Arto Hellas', number: '040-123456' },
-  //   { name: 'Ada Lovelace', number: '39-44-5323523' },
-  //   { name: 'Dan Abramov', number: '12-43-234345' },
-  //   { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  // ])
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
   const [newSearch, setNewSearch] = useState('')
@@ -89,10 +88,21 @@ const App = () => {
       personService
         .create(noteObject)
         .then(response => {
-          setPersons(persons.concat(response.data))      
+          setPersons(persons.concat(response.data))
           setNewName('')
           setNewPhone('')
-      })   
+        })
+    }
+  }
+
+  const deletePerson = (person) => {
+    console.log(person.id)
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .remove(person.id)
+        .then(response => {
+          setPersons(persons.filter(p => p.id !== person.id))
+        })
     }
   }
 
@@ -106,8 +116,7 @@ const App = () => {
         addName={addName} newName={newName} handleNameChange={handleNameChange} newPhone={newPhone} handlePhoneChange={handlePhoneChange}
       />
       <h2>Numbers</h2>
-      <Persons persons={persons} newSearch={newSearch} />
-
+      <Persons persons={persons} newSearch={newSearch} deletePerson={deletePerson} />
     </div>
   )
 }
