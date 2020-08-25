@@ -1,11 +1,6 @@
 {
   "persons": [
     {
-      "name": "Dan Abramov",
-      "number": "12-43-234345",
-      "id": 3
-    },
-    {
       "name": "pepe",
       "phone": "000000",
       "id": 5
@@ -14,6 +9,21 @@
       "name": "pepita",
       "phone": "0000",
       "id": 8
+    },
+    {
+      "name": "nuevo contacto",
+      "phone": "1234",
+      "id": 9
+    },
+    {
+      "name": "test",
+      "phone": "1111",
+      "id": 10
+    },
+    {
+      "name": "nuevo",
+      "phone": "000",
+      "id": 11
     }
   ]
 }
