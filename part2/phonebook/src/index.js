@@ -58,8 +58,8 @@ const App = () => {
   useEffect(() => {
     personService
       .getAll()
-      .then(response => {
-        setPersons(response.data)
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
@@ -81,15 +81,17 @@ const App = () => {
     const duplicatedPerson = persons.find(p => p.name === newName)
 
     if (duplicatedPerson) {
-      window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
-      const updatedPerson = { ...duplicatedPerson, phone: newPhone }
+      if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
+        const updatedPerson = { ...duplicatedPerson, phone: newPhone }
 
-      personService
-        .update(updatedPerson)
-        .then(response => {
-          setPersons(persons.map(p => p.id !== updatedPerson.id ? p : response.data))
-        })
-
+        personService
+          .update(updatedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(p => p.id !== updatedPerson.id ? p : returnedPerson))
+            setNewName('')
+            setNewPhone('')
+          })
+      }
     } else {
       const noteObject = {
         name: newName,
@@ -97,8 +99,8 @@ const App = () => {
       }
       personService
         .create(noteObject)
-        .then(response => {
-          setPersons(persons.concat(response.data))
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewPhone('')
         })
