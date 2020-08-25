@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import personService from './services/persons'
-import './index.css'
 
 const Notification = ({ message }) => {
   if (message === null) {
     return null
   }
 
+  const style = {
+    color: message.type === 'success' ? 'green' : 'red',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 1,
+    marginBottom: 10
+  }
+
   return (
-    <div className="success">
-      {message}
+    <div style={style}>
+      {message.text}
     </div>
   )
 }
@@ -94,21 +103,34 @@ const App = () => {
     const duplicatedPerson = persons.find(p => p.name === newName)
 
     if (duplicatedPerson) {
-      if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         const updatedPerson = { ...duplicatedPerson, phone: newPhone }
 
         personService
           .update(updatedPerson)
           .then(returnedPerson => {
-            setMessage(`Updated number from '${updatedPerson.name}'`)
+            setMessage({
+              'text': `Updated number from ${updatedPerson.name}`,
+              'type': 'success'
+            })
             setTimeout(() => {
               setMessage(null)
             }, 5000)
             setPersons(persons.map(p => p.id !== updatedPerson.id ? p : returnedPerson))
             setNewName('')
             setNewPhone('')
-           
           })
+          .catch(error => {
+            setMessage({
+              "text": `Unable to update ${updatedPerson.name}`,
+              "type": ''
+            })
+
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
+          })
+
 
       }
     } else {
@@ -119,14 +141,17 @@ const App = () => {
       personService
         .create(noteObject)
         .then(returnedPerson => {
-          setMessage(`Added ${returnedPerson.name}`)
+          setMessage({
+            "text": `Added ${returnedPerson.name}`,
+            "type": 'success'
+          })
           setTimeout(() => {
             setMessage(null)
           }, 5000)
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewPhone('')
-        
+
         })
     }
   }
@@ -137,6 +162,16 @@ const App = () => {
         .remove(person.id)
         .then(response => {
           setPersons(persons.filter(p => p.id !== person.id))
+        })
+        .catch(error => {
+          setMessage({
+            "text": `${person.name} already deleted`,
+            "type": ''
+          })
+
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
         })
     }
   }
