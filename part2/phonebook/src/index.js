@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import personService from './services/persons'
 
+
+
 const Notification = ({ message }) => {
   if (message === null) {
     return null
@@ -9,8 +11,7 @@ const Notification = ({ message }) => {
 
   const style = {
     color: message.type === 'success' ? 'green' : 'red',
-    background: 'lightgrey',
-    fontSize: 20,
+    background: '#eee',
     borderStyle: 'solid',
     borderRadius: 5,
     padding: 1,
@@ -26,30 +27,38 @@ const Notification = ({ message }) => {
 
 const PersonForm = ({ addName, newName, handleNameChange, newPhone, handlePhoneChange }) => {
   return (
+    <div>
+    <h2 className="display-5">Add a new contact</h2>
     <form onSubmit={addName}>
-      <div>
-        name: <input
+      <div className="form-group">
+        Name: <input
           value={newName}
-          onChange={handleNameChange} />
+          onChange={handleNameChange} 
+          className="form-control mt-3"/>
       </div>
-      <div>
-        phone: <input
+      <div className="form-group">
+        Phone: <input
           value={newPhone}
-          onChange={handlePhoneChange} />
+          onChange={handlePhoneChange}
+          className="form-control mt-3" />
       </div>
       <div>
-        <button type="submit">add</button>
+        <button className="btn btn-dark my-4 px-4" type="submit">Add</button>
       </div>
     </form>
+    </div>
 
   )
 }
 const Filter = ({ newSearch, handleSearchChange }) => {
   return (
-    <div>
-      filter shown with <input
+
+    <div className="form-inline pb-5">
+<label className="mr-2">Filter shown with</label>      
+      <input
         value={newSearch}
-        onChange={handleSearchChange} />
+        onChange={handleSearchChange} 
+        className="form-control"/>
     </div>
   )
 }
@@ -59,13 +68,16 @@ const Persons = ({ persons, newSearch, deletePerson }) => {
 
 
   return (
-    <ul>
-      {filteredPersons.map(person =>
-        <li key={person.name}>
-          {person.name} {person.phone}
-          <button onClick={() => deletePerson(person)}>delete</button>
-        </li>)}
-    </ul>
+    <div>
+        <h2>Numbers</h2>
+        <ul>
+          {filteredPersons.map(person =>
+          <li key={person.name}>
+            {person.name} {person.phone}
+            <button onClick={() => deletePerson(person)}>delete</button>
+          </li>)}
+        </ul>
+    </div>
   )
 }
 
@@ -177,19 +189,23 @@ const App = () => {
   }
 
   return (
-    <div>
-      <h2>Phonebook</h2>
+    <div className="container">
+      <div className="row justify-content-md-center">
+        <div>
 
-      <Notification message={message} />
+          <h1 className="display-4 py-5">Phonebook</h1>
 
-      <Filter newSearch={newSearch} handleSearchChange={handleSearchChange} />
+          <Notification message={message} />
 
-      <h2>Add a new</h2>
-      <PersonForm
-        addName={addName} newName={newName} handleNameChange={handleNameChange} newPhone={newPhone} handlePhoneChange={handlePhoneChange}
-      />
-      <h2>Numbers</h2>
-      <Persons persons={persons} newSearch={newSearch} deletePerson={deletePerson} />
+          <Filter newSearch={newSearch} handleSearchChange={handleSearchChange} />
+
+          <PersonForm
+            addName={addName} newName={newName} handleNameChange={handleNameChange} newPhone={newPhone} handlePhoneChange={handlePhoneChange}
+          />
+      
+          <Persons persons={persons} newSearch={newSearch} deletePerson={deletePerson} />
+        </div>
+      </div>
     </div>
   )
 }
